@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef } from "react";
 
-interface CustumNumberInputProps {
+interface NumberInputProps {
   value: number;
   onChange: (value: number) => void;
   maxValue?: number;
@@ -13,7 +13,7 @@ interface CustumNumberInputProps {
   fPrecision?: number;
 }
 
-export default function CustumNumberInput({
+export default function NumberInput({
   value,
   onChange,
   maxValue = Number.MAX_VALUE,
@@ -23,7 +23,7 @@ export default function CustumNumberInput({
   changeRangeSpan = 3000, // how much time it take of change to increment from minChange to maxChange
   changeInterval = 81, // how often the change is applied
   fPrecision = 0,
-}: CustumNumberInputProps) {
+}: NumberInputProps) {
   const timerId = useRef<NodeJS.Timeout | null>(null);
   const startTime = useRef<number>(0);
   const sign = useRef<number>(1);
