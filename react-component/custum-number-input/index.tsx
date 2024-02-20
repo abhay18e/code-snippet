@@ -16,8 +16,8 @@ interface CustumNumberInputProps {
 export default function CustumNumberInput({
   value,
   onChange,
-  maxValue = 400, //, Number.MAX_VALUE,
-  minValue = -10, // Number.NEGATIVE_INFINITY,
+  maxValue = Number.MAX_VALUE,
+  minValue = Number.NEGATIVE_INFINITY,
   minChange = 1,
   maxChange = 30,
   changeRangeSpan = 3000, // how much time it take of change to increment from minChange to maxChange
