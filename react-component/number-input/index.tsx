@@ -8,8 +8,6 @@ interface NumberInputProps {
   minValue?: number;
   minChange?: number;
   maxChange?: number;
-  changeRangeSpan?: number;
-  changeInterval?: number;
   fPrecision?: number;
 }
 
@@ -19,11 +17,13 @@ export default function NumberInput({
   maxValue = Number.MAX_VALUE,
   minValue = Number.NEGATIVE_INFINITY,
   minChange = 1,
-  maxChange = 30,
-  changeRangeSpan = 3000, // how much time it take of change to increment from minChange to maxChange
-  changeInterval = 81, // how often the change is applied
+  maxChange = 20,
   fPrecision = 0,
 }: NumberInputProps) {
+  const FIRST_INTERVAL_TIME = 190; // ms
+  const INTERVAL_TIME = 10; // ms
+  const CHNAGE_RANGE_TIME = 8000; // time for changeValue to range from min to max change value
+
   const timerId = useRef<NodeJS.Timeout | null>(null);
   const startTime = useRef<number>(0);
   const sign = useRef<number>(1);
@@ -31,7 +31,7 @@ export default function NumberInput({
   valueRef.current = value;
 
   function calculateChangeValue(elapsedTime: number): number {
-    const x = elapsedTime / changeRangeSpan;
+    const x = elapsedTime / CHNAGE_RANGE_TIME;
     if (x > 1) {
       return maxChange;
     }
@@ -64,7 +64,7 @@ export default function NumberInput({
       newValue = parseAndValidateNumber(newValue);
       onChange(newValue);
 
-      timerId.current = setTimeout(updateNumber, changeInterval);
+      timerId.current = setTimeout(updateNumber, INTERVAL_TIME);
     }
   }
 
@@ -76,7 +76,7 @@ export default function NumberInput({
     e.stopPropagation();
     startTime.current = performance.now();
     sign.current = _sign;
-    timerId.current = setTimeout(updateNumber, changeInterval);
+    timerId.current = setTimeout(updateNumber, FIRST_INTERVAL_TIME);
   };
 
   const stopUpdate = (e: React.MouseEvent | React.TouchEvent) => {
@@ -84,7 +84,7 @@ export default function NumberInput({
     e.stopPropagation();
     if (startTime.current) {
       const elapsedTime = performance.now() - startTime.current;
-      if (elapsedTime < changeInterval) {
+      if (elapsedTime < FIRST_INTERVAL_TIME) {
         let newValue = valueRef.current + minChange * sign.current;
         newValue = parseAndValidateNumber(newValue);
         onChange(newValue);
@@ -98,9 +98,9 @@ export default function NumberInput({
   };
 
   return (
-    <div className="flex flex-row items-center space-x-1 w-full   box-border m-0">
+    <div className="flex flex-row items-center space-x-1 w-full bg-gradient-to-b from-white to-blue-50 p-1  rounded-md  box-border m-0">
       <button
-        className=" select-none bg-gradient-to-b py-1  from-orange-300  to-orange-600 text-white rounded flex-grow flex-shrink w-10 flex-auto"
+        className=" select-none bg-gradient-to-b py-1  from-blue-400  to-blue-700 text-white rounded flex-grow flex-shrink w-10 flex-auto"
         onMouseDown={(e) => startUpdate(e, -1)}
         onMouseUp={stopUpdate}
         onTouchStart={(e) => startUpdate(e, -1)}
@@ -114,11 +114,11 @@ export default function NumberInput({
         type="number"
         value={value}
         disabled
-        onBlur={(e) => onChange(parseFloat(e.target.value))}
+        onChange={(e) => onChange(Number(e.target.value))}
       />
 
       <button
-        className=" select-none bg-gradient-to-b py-1  from-orange-300  to-orange-600 text-white rounded flex-grow flex-shrink w-10 flex-auto"
+        className=" select-none bg-gradient-to-b py-1   from-blue-400  to-blue-700 text-white rounded-md flex-grow flex-shrink w-10 flex-auto"
         onMouseDown={(e) => startUpdate(e, 1)}
         onMouseUp={stopUpdate}
         onTouchStart={(e) => startUpdate(e, 1)}
